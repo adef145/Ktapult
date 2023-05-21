@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ktapult.Error
 import com.ktapult.Ktapult
+import com.ktapult.Ktapult.Companion.ITEM_TO_PAYLOAD_FLOW_MAPPER
 import com.ktapult.KtapultEvent
 import com.ktapult.KtapultState
 import com.ktapult.KtapultTag
@@ -26,8 +27,11 @@ fun Greeting(
     ktapult: Ktapult = ktapult()
 ) {
     ktapult
-        .collectPayloadAsState(GreetingState(id), Loading)
-        .whenTypeIs<Loading> {
+        .collectAsState(
+            state = GreetingState(id),
+            mapper = ITEM_TO_PAYLOAD_FLOW_MAPPER,
+            initial = Loading
+        ).whenTypeIs<Loading> {
             Text(text = "On Loading")
         }.whenTypeIs<Error> {
             Text(text = "On Error ${it.throwable.message}")

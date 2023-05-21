@@ -5,8 +5,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ktapult.Ktapult.Companion.ITEM_TO_ITEM_FLOW_MAPPER
-import com.ktapult.Ktapult.Companion.ITEM_TO_PAYLOAD_FLOW_MAPPER
 import com.ktapult.Ktapult.Companion.ktapults
 import com.ktapult.extension.findSourceElement
 import kotlinx.coroutines.CoroutineScope
@@ -70,23 +68,14 @@ internal class KtapultViewModel : ViewModel(), Ktapult {
     }
 
     @Composable
-    override fun collectAsState(state: KtapultState, initial: KtapultPayload): State<KtapultItem> {
-        val sourceElement = findSourceElement()
-        return flow {
-            collect(sourceElement, arrayOf(state), ITEM_TO_ITEM_FLOW_MAPPER) {
-                emit(it)
-            }
-        }.collectAsState(initial = KtapultItem(state, initial))
-    }
-
-    @Composable
-    override fun collectPayloadAsState(
+    override fun <T> collectAsState(
         state: KtapultState,
-        initial: KtapultPayload
-    ): State<KtapultPayload> {
+        mapper: KtapultFlowMapper<KtapultItem, T>,
+        initial: T
+    ): State<T> {
         val sourceElement = findSourceElement()
         return flow {
-            collect(sourceElement, arrayOf(state), ITEM_TO_PAYLOAD_FLOW_MAPPER) {
+            collect(sourceElement, arrayOf(state), mapper) {
                 emit(it)
             }
         }.collectAsState(initial = initial)

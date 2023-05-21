@@ -102,10 +102,20 @@ interface Ktapult {
     // region State
 
     @Composable
-    fun collectAsState(state: KtapultState, initial: KtapultPayload): State<KtapultItem>
+    fun <T> collectAsState(
+        state: KtapultState,
+        mapper: KtapultFlowMapper<KtapultItem, T>,
+        initial: T
+    ): State<T>
 
     @Composable
-    fun collectPayloadAsState(state: KtapultState, initial: KtapultPayload): State<KtapultPayload>
+    fun collectAsState(state: KtapultState, initial: KtapultPayload): State<KtapultItem> {
+        return collectAsState(
+            state = state,
+            mapper = ITEM_TO_ITEM_FLOW_MAPPER,
+            initial = KtapultItem(state, initial)
+        )
+    }
 
     // endregion
 }

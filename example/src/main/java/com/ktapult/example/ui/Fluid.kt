@@ -47,8 +47,11 @@ fun Fluid(
     ktapult: Ktapult = ktapult()
 ) {
     ktapult
-        .collectPayloadAsState(FluidState, Loading)
-        .whenTypeIs<Loading> {
+        .collectAsState(
+            state = FluidState,
+            mapper = Ktapult.ITEM_TO_PAYLOAD_FLOW_MAPPER,
+            Loading
+        ).whenTypeIs<Loading> {
             Text(text = "On Loading")
         }.whenTypeIs<Loaded<List<Item>>> {
             LazyColumn {
@@ -67,11 +70,13 @@ private fun FluidItem(
     item: Item,
     ktapult: Ktapult
 ) {
-    val fluidItemState = ktapult.collectPayloadAsState(FluidItemState(item.id), Loaded(item))
+    val fluidItemState = ktapult.collectAsState(
+        state = FluidItemState(item.id),
+        mapper = Ktapult.itemToPayloadAs(),
+        initial = Loaded(item)
+    )
 
-    fluidItemState.whenTypeIs<Loaded<Item>> {
-        Greeting(FluidEvent, it.data, ktapult)
-    }
+    Greeting(FluidEvent, fluidItemState.value.data, ktapult)
 }
 
 @Composable
