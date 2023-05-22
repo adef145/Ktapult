@@ -61,7 +61,7 @@ internal class KtapultViewModel : ViewModel(), Ktapult {
 
     override suspend fun <T> collect(
         tags: Array<KtapultTag>,
-        mapper: (Flow<KtapultItem>) -> Flow<T>,
+        mapper: KtapultFlowMapper<KtapultItem, T>,
         collector: FlowCollector<T>
     ) {
         collect(findSourceElement(), tags, mapper, collector)
@@ -125,10 +125,10 @@ internal class KtapultViewModel : ViewModel(), Ktapult {
     private suspend fun <T> collect(
         sourceElement: StackTraceElement?,
         tags: Array<KtapultTag>,
-        mapper: (Flow<KtapultItem>) -> Flow<T>,
+        mapper: KtapultFlowMapper<KtapultItem, T>,
         collector: FlowCollector<T>
     ) {
-        mapper(
+        mapper.map(
             of(tags = tags).filterNot { it.payload is Initial }
         ).collect {
             KtapultLogger.d("<< Collect${getSourceElementInfo(sourceElement)}:\n\tvalue: $it")

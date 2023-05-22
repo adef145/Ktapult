@@ -7,10 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ktapult.Ktapult
+import com.ktapult.KtapultFlowMapper
 import com.ktapult.example.ui.Main
 import com.ktapult.example.ui.MainEvent
 import com.ktapult.example.ui.OpenNewScreen
 import com.ktapult.extension.ktapult
+import com.ktapult.extension.toPayloadAs
 
 class MainActivity : ComponentActivity() {
 
@@ -27,7 +29,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launchWhenStarted {
             ktapult.collect(
                 tag = MainEvent,
-                mapper = Ktapult.itemToPayloadAs<OpenNewScreen>(),
+                mapper = KtapultFlowMapper.toPayloadAs<OpenNewScreen>(),
                 collector = {
                     startActivity(Intent(this@MainActivity, MainActivity::class.java))
                 }

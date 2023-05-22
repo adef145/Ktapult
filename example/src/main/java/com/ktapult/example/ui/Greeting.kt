@@ -8,14 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ktapult.Error
 import com.ktapult.Ktapult
-import com.ktapult.Ktapult.Companion.ITEM_TO_PAYLOAD_FLOW_MAPPER
 import com.ktapult.KtapultEvent
+import com.ktapult.KtapultFlowMapper
 import com.ktapult.KtapultState
 import com.ktapult.KtapultTag
 import com.ktapult.Loaded
 import com.ktapult.Loading
 import com.ktapult.example.Item
 import com.ktapult.extension.ktapult
+import com.ktapult.extension.toPayload
 import com.ktapult.extension.whenTypeIs
 
 data class GreetingState(val id: Int) : KtapultState
@@ -29,7 +30,7 @@ fun Greeting(
     ktapult
         .collectAsState(
             state = GreetingState(id),
-            mapper = ITEM_TO_PAYLOAD_FLOW_MAPPER,
+            mapper = KtapultFlowMapper.toPayload(),
             initial = Loading
         ).whenTypeIs<Loading> {
             Text(text = "On Loading")

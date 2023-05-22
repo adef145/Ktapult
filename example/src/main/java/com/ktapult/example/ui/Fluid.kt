@@ -7,12 +7,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import com.ktapult.Ktapult
 import com.ktapult.KtapultEvent
+import com.ktapult.KtapultFlowMapper
 import com.ktapult.KtapultPayload
 import com.ktapult.KtapultState
 import com.ktapult.Loaded
 import com.ktapult.Loading
 import com.ktapult.example.Item
 import com.ktapult.extension.ktapult
+import com.ktapult.extension.toPayload
+import com.ktapult.extension.toPayloadAs
 import com.ktapult.extension.whenTypeIs
 
 // region KtapultTag
@@ -49,7 +52,7 @@ fun Fluid(
     ktapult
         .collectAsState(
             state = FluidState,
-            mapper = Ktapult.ITEM_TO_PAYLOAD_FLOW_MAPPER,
+            mapper = KtapultFlowMapper.toPayload(),
             Loading
         ).whenTypeIs<Loading> {
             Text(text = "On Loading")
@@ -72,7 +75,7 @@ private fun FluidItem(
 ) {
     val fluidItemState = ktapult.collectAsState(
         state = FluidItemState(item.id),
-        mapper = Ktapult.itemToPayloadAs(),
+        mapper = KtapultFlowMapper.toPayloadAs(),
         initial = Loaded(item)
     )
 

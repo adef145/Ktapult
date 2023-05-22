@@ -17,9 +17,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ktapult.Ktapult
 import com.ktapult.KtapultEvent
+import com.ktapult.KtapultFlowMapper
 import com.ktapult.KtapultPayload
 import com.ktapult.example.ui.theme.KtapultTheme
 import com.ktapult.extension.ktapult
+import com.ktapult.extension.toPayloadAs
 
 object MainEvent : KtapultEvent
 
@@ -40,7 +42,7 @@ fun Main(
                 ktapult
                     .collect(
                         tag = FluidEvent,
-                        mapper = Ktapult.itemToPayloadAs<OnItemClick>(),
+                        mapper = KtapultFlowMapper.toPayloadAs<OnItemClick>(),
                         collector = {
                             navHostController.navigate("DETAIL/${it.id}")
                         }

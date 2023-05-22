@@ -3,8 +3,7 @@ package com.ktapult.example
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ktapult.Ktapult
-import com.ktapult.Ktapult.Companion.itemToPairAs
-import com.ktapult.Ktapult.Companion.itemToPayloadAs
+import com.ktapult.KtapultFlowMapper
 import com.ktapult.Loaded
 import com.ktapult.Loading
 import com.ktapult.example.ui.AddMore
@@ -16,6 +15,8 @@ import com.ktapult.example.ui.GreetingState
 import com.ktapult.example.ui.OnIncrementAllClick
 import com.ktapult.example.ui.OnIncrementClick
 import com.ktapult.example.ui.OnItemClick
+import com.ktapult.extension.toPairAs
+import com.ktapult.extension.toPayloadAs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -48,7 +49,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             ktapult.collect(
                 tags = arrayOf(FluidEvent),
-                mapper = itemToPayloadAs<AddMore>(),
+                mapper = KtapultFlowMapper.toPayloadAs<AddMore>(),
                 collector = {
                     fluidList.add(Item(fluidList.size, "Android ${fluidList.size}"))
                     ktapult.emit(FluidState, Loaded(fluidList))
@@ -61,7 +62,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             ktapult.collect(
                 tag = FluidEvent,
-                mapper = itemToPayloadAs<OnItemClick>(),
+                mapper = KtapultFlowMapper.toPayloadAs<OnItemClick>(),
                 collector = {
                     greeting(ktapult, it.id)
                 }
@@ -73,7 +74,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             ktapult.collect(
                 tags = arrayOf(FluidEvent, GreetingEvent),
-                mapper = itemToPairAs<OnIncrementClick>(),
+                mapper = KtapultFlowMapper.toPairAs<OnIncrementClick>(),
                 collector = { (tag, onIncrementClick) ->
                     val item = onIncrementClick.item
                     item.counter++
@@ -91,7 +92,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             ktapult.collect(
                 tags = arrayOf(FluidEvent, GreetingEvent),
-                mapper = itemToPairAs<OnIncrementAllClick>(),
+                mapper = KtapultFlowMapper.toPairAs<OnIncrementAllClick>(),
                 collector = { (tag, onIncrementClick) ->
                     val item = onIncrementClick.item
                     item.counter++
