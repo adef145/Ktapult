@@ -6,8 +6,10 @@ import com.ktapult.CombineKtapultFlowMapper
 import com.ktapult.KtapultFlowMapper
 import com.ktapult.KtapultItem
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transformWhile
 
 fun <T, R1, R2> KtapultFlowMapper<T, R1>.then(
     mapper: (Flow<R1>) -> Flow<R2>
@@ -38,4 +40,15 @@ fun <T, R> KtapultFlowMapper<T, R>.flowWithLifecycle(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED
 ): KtapultFlowMapper<T, R> = then {
     it.flowWithLifecycle(lifecycle, minActiveState)
+}
+
+fun <T, R> KtapultFlowMapper<T, R>.distinctUntilChanged(): KtapultFlowMapper<T, R> = then {
+    it.distinctUntilChanged()
+}
+
+fun <T, R> KtapultFlowMapper<T, R>.single(): KtapultFlowMapper<T, R> = then { flow ->
+    flow.transformWhile {
+        emit(it)
+        false
+    }
 }
